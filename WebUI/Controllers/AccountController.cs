@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using WebUI.Entities;
 
 namespace WebUI.Controllers
@@ -59,6 +61,59 @@ namespace WebUI.Controllers
             catch (Exception ex)
             {
                 return BadRequest($"Something went wrong, please try again. {ex.Message}");
+            }
+        }
+
+        [HttpGet("Logout"), Authorize]
+        public async Task<IActionResult> Logout()
+        {
+            try
+            {
+                await signInManager.SignOutAsync();
+                return Ok(new { message = "You are free to go!" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Some thing went wrong, please try again. {ex.Message}");
+            }
+        }
+
+        [HttpGet("Admin"), Authorize]
+        public IActionResult AdminPage()
+        {
+            string[] partners = ["TienDuat", "MyLinh", "Luffy", "Naruto", "Hinata", "Harry", "Ginny", "Zoro"];
+            return Ok(new { trustedPartners = partners });
+        }
+
+        [HttpGet("Home/{email}"), Authorize]
+        public async Task<IActionResult> HomePage(string email)
+        {
+            var userInfo = await userManager.FindByEmailAsync(email);
+            return userInfo == null ? NotFound() : Ok(userInfo);
+        }
+
+        [HttpGet("CheckUser"), Authorize]
+        public async Task<IActionResult> CheckUser(string email)
+        {
+            var currentUser = new ApplicationUser();
+            try
+            {
+                var user = HttpContext.User;
+                var principals = new ClaimsPrincipal(user);
+                var result = signInManager.IsSignedIn(principals);
+                if (result)
+                {
+                    currentUser = await signInManager.UserManager.GetUserAsync(principals);
+                    return Ok(new { message = "Logged in", currentUser });
+                }
+                else
+                {
+                    return Forbid("Access Denied");
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Some thing went wrong, please try again {ex.Message}");
             }
         }
     }
