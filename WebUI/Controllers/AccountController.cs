@@ -93,9 +93,8 @@ namespace WebUI.Controllers
         }
 
         [HttpGet("CheckUser"), Authorize]
-        public async Task<IActionResult> CheckUser(string email)
+        public async Task<IActionResult> CheckUser()
         {
-            var currentUser = new ApplicationUser();
             try
             {
                 var user = HttpContext.User;
@@ -103,7 +102,7 @@ namespace WebUI.Controllers
                 var result = signInManager.IsSignedIn(principals);
                 if (result)
                 {
-                    currentUser = await signInManager.UserManager.GetUserAsync(principals);
+                    var currentUser = await signInManager.UserManager.GetUserAsync(principals);
                     return Ok(new { message = "Logged in", currentUser });
                 }
                 else

@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react";
 
+interface ApplicationUser{
+    
+}
+
 const Home = () => {
   document.title = "Welcome";
   const [userInfo, setUserInfo] = useState({});
@@ -18,7 +22,31 @@ const Home = () => {
   }, [])
   return (
     <section>
-        
+        <header>
+            <h1>Welcome to your page</h1>
+        </header>
+        {
+            userInfo ?
+            <div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Created Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <td>{userInfo.Name}</td>
+                        <td></td>
+                        <td></td>
+                    </tbody>
+                </table>
+            </div> :
+            <div className="warning">
+                <span>Access Denied!!!</span>
+            </div>
+        }
     </section>
   )
 }
