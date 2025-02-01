@@ -1,12 +1,17 @@
 import { useEffect, useState } from "react";
+import FormatDate from "../Extension/FormatDate";
 
 interface ApplicationUser{
-    
+    Id: string;
+    Name: string,
+    UserName: string;
+    Email: string,
+    CreateDateTime: Date;
 }
 
 const Home = () => {
   document.title = "Welcome";
-  const [userInfo, setUserInfo] = useState({});
+  const [userInfo, setUserInfo] = useState<ApplicationUser| null>(null);
   useEffect(() =>{
     const user = localStorage.getItem("user");
     fetch("api/Account/Home" + user,{
@@ -38,8 +43,8 @@ const Home = () => {
                     </thead>
                     <tbody>
                         <td>{userInfo.Name}</td>
-                        <td></td>
-                        <td></td>
+                        <td>{userInfo.Email}</td>
+                        <td>{userInfo.CreateDateTime ? FormatDate(userInfo.CreateDateTime) : ""}</td>
                     </tbody>
                 </table>
             </div> :
